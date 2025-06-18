@@ -1,0 +1,215 @@
+# Default values for metabase.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+# Horizontal Pod Autoscaler
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Pod Disruption Budget
+pdb:
+  create: false
+  minAvailable: 1
+  maxUnavailable: ""
+
+# Image configuration
+image:
+  repository: metabase/metabase
+  # Use latest stable version - update this to control version
+  tag: "v0.55.4"
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+# Deployment configuration
+deploymentAnnotations: {}
+deploymentLabels: {}
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+
+# Network configuration
+listen:
+  host: "0.0.0.0"
+  port: 3000
+
+# SSL configuration
+ssl:
+  enabled: false
+  # port: 8443
+  # keyStore: |-
+  #   << JKS KEY STORE >>
+  # keyStorePassword: storepass
+
+# Jetty web server configuration
+jetty:
+  # maxThreads: 254
+  # minThreads: 8
+  # maxQueued: -1
+  # maxIdleTime: 60000
+
+# Database configuration
+database:
+  # Database type (h2 / mysql / postgres), default: h2
+  type: h2
+  # For H2 database file location (requires persistent volume)
+  # file: /metabase-data/metabase.db
+  
+  # For external databases (MySQL/PostgreSQL)
+  # host: ""
+  # port: ""
+  # dbname: ""
+  # username: ""
+  # password: ""
+  
+  # Connection URI for full configurability
+  # connectionURI: ""
+  
+  # Existing secret configuration
+  # existingSecret: ""
+  # existingSecretUsernameKey: ""
+  # existingSecretPasswordKey: ""
+  # existingSecretConnectionURIKey: ""
+  # existingSecretEncryptionKeyKey: ""
+
+# Password complexity requirements
+password:
+  # Options: weak, normal, strong
+  complexity: normal
+  length: 6
+
+# Application configuration
+timeZone: UTC
+emojiLogging: true
+colorLogging: true
+# javaOpts: ""
+# pluginsDirectory: /plugins
+# siteUrl: ""
+
+# Session configuration
+session: {}
+  # maxSessionAge: 20160
+  # sessionCookies: true
+  # cookieSameSite: "Lax"
+
+# Health checks
+livenessProbe:
+  path: /api/health
+  initialDelaySeconds: 120
+  timeoutSeconds: 30
+  failureThreshold: 6
+
+readinessProbe:
+  path: /api/health
+  initialDelaySeconds: 30
+  timeoutSeconds: 3
+  periodSeconds: 5
+
+# Service configuration
+service:
+  name: metabase
+  type: ClusterIP
+  externalPort: 80
+  internalPort: 3000
+  # nodePort: ""
+  annotations: {}
+  labels: {}
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  hosts:
+    - host: "*"
+      paths:
+        - path: /
+          pathType: Prefix
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  tls: []
+    # - secretName: metabase-tls
+    #   hosts:
+    #     - metabase.example.com
+
+# Service Account configuration
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+  automountServiceAccountToken: false
+
+# Resource limits and requests
+resources: {}
+  # limits:
+  #   cpu: 1000m
+  #   memory: 2Gi
+  # requests:
+  #   cpu: 500m
+  #   memory: 1Gi
+
+# Node selection
+nodeSelector: {}
+
+# Tolerations for pod assignment
+tolerations: []
+
+# Affinity for pod assignment
+affinity: {}
+
+# Topology spread constraints
+topologySpreadConstraints: []
+
+# Security context
+securityContext: {}
+
+# Additional environment variables
+extraEnv: []
+  # - name: MB_CHECK_FOR_UPDATES
+  #   value: "false"
+  # - name: MB_ADMIN_EMAIL
+  #   value: "admin@example.com"
+
+# Environment variables from ConfigMaps or Secrets
+envFrom: []
+
+# Additional volumes
+extraVolumes: []
+  # - name: plugins
+  #   emptyDir: {}
+
+# Additional volume mounts
+extraVolumeMounts: []
+  # - name: plugins
+  #   mountPath: /plugins
+
+# Init containers for setup tasks
+extraInitContainers: []
+
+# Sidecar containers
+sidecars: []
+
+# Monitoring configuration
+monitoring:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+  port: 9191
+
+# Version update configuration
+# This section helps with maintaining latest versions
+versionUpdate:
+  # Set to true to automatically use latest tag
+  useLatest: false
+  # Check interval for version updates (when useLatest is true)
+  # checkInterval: "24h"
+  # Notification settings for version updates
+  notifications:
+    enabled: false
+    # webhook: ""
+    # email: "" 
